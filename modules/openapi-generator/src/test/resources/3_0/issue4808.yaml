@@ -17,30 +17,15 @@ paths:
         schema:
           $ref: '#/components/schemas/SomeQuery'
       responses:
-        '200':
-          description: Some return value
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SomeReturnValue'
-              example:
-                someValue: value
+        '204':
+          description: Success
 components:
   schemas:
-    SomeReturnValue:
-      type: object
-      required:
-        - someValue
-      properties:
-        someValue:
-          type: string
     SomeQuery:
       type: object
       required:
         - someValue
       properties:
-        someValue:
-          type: string
         testOutcomes:
           type: array
           items:

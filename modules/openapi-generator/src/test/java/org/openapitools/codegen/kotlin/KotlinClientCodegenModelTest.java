@@ -379,11 +379,10 @@ public class KotlinClientCodegenModelTest {
         DefaultGenerator generator = new DefaultGenerator();
         List<File> files = generator.opts(clientOptInput).generate();
 
-        Assert.assertEquals(files.size(), 30);
+        Assert.assertEquals(files.size(), 28);
         TestUtils.assertFileContains(Paths.get(output + "/src/main/kotlin/xyz/abcdef/api/DefaultApi.kt"),
             "import xyz.abcdef.model.TestOutcome",
             "fun getSomeValue(" +
-                "@Query(\"someValue\") someValue: kotlin.String, " +
                 "@Query(\"testOutcomes\") testOutcomes: kotlin.collections.List<TestOutcome>? = null)"
         );
     }
