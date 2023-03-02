@@ -363,6 +363,7 @@ public class KotlinClientCodegenModelTest {
     public void testNativeClientExplodedQueryParamObject() throws IOException {
         Map<String, Object> properties = new HashMap<>();
         properties.put(CodegenConstants.API_PACKAGE, "xyz.abcdef.api");
+        properties.put(CodegenConstants.MODEL_PACKAGE, "xyz.abcdef.model");
 
         File output = Files.createTempDirectory("test").toFile();
         output.deleteOnExit();
@@ -378,9 +379,12 @@ public class KotlinClientCodegenModelTest {
         DefaultGenerator generator = new DefaultGenerator();
         List<File> files = generator.opts(clientOptInput).generate();
 
-        Assert.assertEquals(files.size(), 28);
+        Assert.assertEquals(files.size(), 30);
         TestUtils.assertFileContains(Paths.get(output + "/src/main/kotlin/xyz/abcdef/api/DefaultApi.kt"),
-            "fun getSomeValue(@Query(\"since\") since: kotlin.String? = null, @Query(\"sinceBuild\") sinceBuild: kotlin.String? = null, @Query(\"maxBuilds\") maxBuilds: kotlin.Int? = null, @Query(\"maxWaitSecs\") maxWaitSecs: kotlin.Int? = null)"
+            "import xyz.abcdef.model.TestOutcome",
+            "fun getSomeValue(" +
+                "@Query(\"since\") someValue: kotlin.String? = null, " +
+                "@Query(\"testOutcomes\") testOutcomes: kotlin.collections.List<TestOutcome>)"
         );
     }
 

@@ -15,16 +15,7 @@ paths:
         explode: true
         style: form
         schema:
-          type: object
-          properties:
-            since:
-              type: string
-            sinceBuild:
-              type: string
-            maxBuilds:
-              type: integer
-            maxWaitSecs:
-              type: integer
+          $ref: '#/components/schemas/SomeQuery'
       responses:
         '200':
           description: Some return value
@@ -43,3 +34,19 @@ components:
       properties:
         someValue:
           type: string
+    SomeQuery:
+      type: object
+      required:
+        - someValue
+      properties:
+        someValue:
+          type: string
+        testOutcomes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestOutcome'
+    TestOutcome:
+      type: string
+      enum:
+        - foo
+        - bar
