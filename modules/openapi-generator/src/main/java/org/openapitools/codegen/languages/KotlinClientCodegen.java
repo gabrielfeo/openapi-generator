@@ -18,9 +18,7 @@
 package org.openapitools.codegen.languages;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -907,9 +905,57 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
                         }
                     }
                 }
+
+                // For exploded query params, import each var type instead of the Query class
+                if (JVM_RETROFIT2.equals(getLibrary())) {
+                    List<CodegenParameter> explodedParams = getExplodedQueryParams(operation);
+                    explodeOperationImports(operation, explodedParams);
+                }
             }
         }
         return objs;
+    }
+
+    // TODO Don't mutate collections
+
+    private List<CodegenParameter> getExplodedQueryParams(CodegenOperation operation) {
+        return operation.queryParams.stream()
+            .filter(p -> p.isExplode)
+            .collect(Collectors.toList());
+    }
+
+    private void explodeOperationImports(CodegenOperation operation, List<CodegenParameter> explodedParams) {
+        for (CodegenParameter param : explodedParams) {
+            for (CodegenProperty paramVar : param.getVars()) {
+                addImport(operation, getTypeWithoutParameters(paramVar.dataType));
+                for (String typeParam : getTypeParameters(paramVar.dataType)) {
+                    addImport(operation, typeParam);
+                }
+            }
+        }
+    }
+
+    private void addImport(CodegenOperation operation, String type) {
+        if (needToImport(type)) {
+            operation.imports.add(type);
+        }
+    }
+
+    private String getTypeWithoutParameters(String type) {
+        int firstBracketPosition = type.indexOf('<');
+        if (firstBracketPosition == -1) {
+            return type;
+        }
+        return type.substring(0, firstBracketPosition);
+    }
+
+    private String[] getTypeParameters(String type) {
+        int firstBracketPosition = type.indexOf('<');
+        if (firstBracketPosition == -1) {
+            return new String[0];
+        }
+        String paramsString = type.substring(firstBracketPosition + 1, type.lastIndexOf('>'));
+        return paramsString.split(", ");
     }
 
     private static boolean isMultipartType(List<Map<String, String>> consumes) {

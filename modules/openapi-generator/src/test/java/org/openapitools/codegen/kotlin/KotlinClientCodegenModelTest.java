@@ -383,8 +383,8 @@ public class KotlinClientCodegenModelTest {
         TestUtils.assertFileContains(Paths.get(output + "/src/main/kotlin/xyz/abcdef/api/DefaultApi.kt"),
             "import xyz.abcdef.model.TestOutcome",
             "fun getSomeValue(" +
-                "@Query(\"since\") someValue: kotlin.String? = null, " +
-                "@Query(\"testOutcomes\") testOutcomes: kotlin.collections.List<TestOutcome>)"
+                "@Query(\"someValue\") someValue: kotlin.String, " +
+                "@Query(\"testOutcomes\") testOutcomes: kotlin.collections.List<TestOutcome>? = null)"
         );
     }
 

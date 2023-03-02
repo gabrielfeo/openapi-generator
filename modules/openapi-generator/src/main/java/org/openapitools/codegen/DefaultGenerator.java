@@ -1227,6 +1227,17 @@ public class DefaultGenerator implements Generator {
         operations.setOperation(objs);
         operations.put("package", config.apiPackage());
 
+        updateImportsFromOperations(ops, operations);
+
+        config.postProcessOperationsWithModels(operations, allModels);
+
+        // Post-processing may change operation imports, so update the full list of imports
+        updateImportsFromOperations(ops, operations);
+
+        return operations;
+    }
+
+    private void updateImportsFromOperations(List<CodegenOperation> ops, OperationsMap operations) {
         Set<String> allImports = new ConcurrentSkipListSet<>();
         for (CodegenOperation op : ops) {
             allImports.addAll(op.imports);
@@ -1242,9 +1253,6 @@ public class DefaultGenerator implements Generator {
         if (!imports.isEmpty()) {
             operations.put("hasImport", true);
         }
-
-        config.postProcessOperationsWithModels(operations, allModels);
-        return operations;
     }
 
     /**
