@@ -210,8 +210,11 @@ public class TestUtils {
             String generatedFile = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
             String file = linearize(generatedFile);
             assertNotNull(file);
-            for (String line : lines)
-                assertTrue(file.contains(linearize(line)), "File does not contain line [" + line + "]");
+            for (String line : lines) {
+                if (!file.contains(linearize(line))) {
+                    fail("File does not contain line [" + line + "]. File content:\n" + generatedFile);
+                }
+            }
         } catch (IOException e) {
             fail("Unable to evaluate file " + path);
         }
